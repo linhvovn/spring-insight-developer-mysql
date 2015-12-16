@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+	                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet author="insightdb" id="createConfigsTable">
+        <createTable tableName="CONFIGS">
+            <column autoIncrement="true" name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_6"/>
+            </column>
+            <column name="KEY" type="VARCHAR(255)"/>
+            <column name="VERSION" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DTYPE" type="VARCHAR(31)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createIndex indexName="CONFIGS_KEY_IDX" tableName="CONFIGS" unique="true">
+            <column name="KEY"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="insightdb" id="createTraceTagRulesTable">
+        <createTable tableName="TRACE_TAG_RULES">
+            <column autoIncrement="true" name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_8"/>
+            </column>
+            <column name="PATTERN" type="VARCHAR(1024)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PRECEDENCE" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="THRESHOLD" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="RULE_LIST" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="RULE_LIST" baseTableName="TRACE_TAG_RULES" 
+                                 constraintName="TRACE_TAG_RULES_RULE_LIST_IDX" deferrable="false" 
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" 
+                                 referencedColumnNames="ID" referencedTableName="CONFIGS"/>
+        
+    </changeSet>
+
+    <changeSet author="insightdb" id="createTraceSummariesTable">
+        <createTable tableName="TRACE_SUMMARIES">
+            <column autoIncrement="true" name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="TRACE_SUMMARIES_PK"/>
+            </column>
+            <column name="RESPONSE_TIME" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ERROR_COUNT" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ERROR_TEXT" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="LABEL" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="RANGE_END" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="RANGE_START" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VERSION" type="INT"/>
+            <column name="SERVER_NAME" type="VARCHAR(255)"/>
+            <column name="APP_NAME" type="VARCHAR(255)"/>
+            <column name="ENDPOINT_NAME" type="VARCHAR(255)"/>
+            <column name="EXTERNAL_RESOURCE_NAME" type="VARCHAR(255)"/>            
+            <column name="EXTERNAL_RESOURCE_SUBTYPE" type="VARCHAR(255)"/>
+            <column name="EXTERNAL_RESOURCE_HOST" type="VARCHAR(255)"/>
+            <column name="EXTERNAL_RESOURCE_PORT" type="INTEGER"/>
+            <column name="EXTERNAL_RESOURCE_VENDOR" type="VARCHAR(255)"/>
+            <column name="EXTERNAL_RESOURCE_IS_INCOMING" type="BOOLEAN" defaultValueBoolean="false"/>
+            <column name="EXTERNAL_RESOURCE_IS_PARENT" type="BOOLEAN" defaultValueBoolean="false"/>
+            <column name="EXTERNAL_RESOURCE_DEST_APPLICATION_NAME" type="VARCHAR(255)"/>
+            <column name="EXTERNAL_RESOURCE_DEST_SERVER_NAME" type="VARCHAR(255)"/>
+            <column name="EXTERNAL_RESOURCE_DEST_END_POINT_NAME" type="VARCHAR(255)"/>
+            <column name="EXTERNAL_RESOURCE_PARENT_RESOURCE_NAME" type="VARCHAR(255)"/>
+            <column name="TRACE_ID_STR" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+    </changeSet>
+
+    <changeSet author="insightdb" id="createTraceSummariesEndPointIndex">
+        <createIndex indexName="TRACE_SUMMARIES_END_POINT_IDX" tableName="TRACE_SUMMARIES" unique="false">
+            <column name="ENDPOINT_NAME"/>
+        </createIndex>
+        <createIndex indexName="TRACE_SUMMARIES_SERVER_IDX" tableName="TRACE_SUMMARIES" unique="false">
+            <column name="SERVER_NAME"/>
+        </createIndex>
+        <createIndex indexName="TRACE_SUMMARIES_APP_IDX" tableName="TRACE_SUMMARIES" unique="false">
+            <column name="APP_NAME"/>
+        </createIndex>
+    </changeSet>
+    
+    <changeSet author="insightdb" id="createTagsTable">
+        <createTable tableName="TAGS">
+            <column autoIncrement="true" name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="TAGS_PK"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VERSION" type="INT"/>
+        </createTable>
+        
+        <createIndex indexName="TAGS_NAME_IDX" tableName="TAGS" unique="true">
+            <column name="NAME"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="insightdb" id="createTraceTagsTable">
+        <createTable tableName="TRACE_SUMMARY_TAG">
+            <column name="TRACE_SUMMARY_ID" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TAG_ID" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey columnNames="TRACE_SUMMARY_ID, TAG_ID" constraintName="CONSTRAINT_3C" tableName="TRACE_SUMMARY_TAG"/>
+
+    </changeSet>
+
+    <changeSet author="insightdb" id="createTraceSummaryIndexes">
+        <createIndex indexName="TRACE_SUMMARIES_TRACE_ID_STR_IDX" tableName="TRACE_SUMMARIES" unique="false">
+            <column name="TRACE_ID_STR"/>
+        </createIndex>
+        <createIndex indexName="TRACE_SUMMARIES_TRACE_RANGE_START_IDX" tableName="TRACE_SUMMARIES" unique="false">
+            <column name="RANGE_START"/>
+        </createIndex>
+    </changeSet>
+	
+
+</databaseChangeLog>
