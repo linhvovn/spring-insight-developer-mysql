@@ -1,3 +1,10 @@
 Manifest-Version: 1.0
-Class-Path: 
+Implementation-Vendor: Insight
+Implementation-Title: insight-dashboard
+Implementation-Version: 1.9.2.SR6
+Built-By: dave
+Build-Jdk: 1.7.0_72
+Created-By: Apache Maven 3.0.4
+Release-Timestamp: 20141113091832
+Archiver-Version: Plexus Archiver
 
